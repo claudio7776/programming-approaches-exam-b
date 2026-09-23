@@ -18,7 +18,7 @@ output file.}
 Invisibly returns the Docker process exit status.
 }
 \description{
-Launches the \code{matrix-impute\code{ Docker image and mounts a local data directory
+Launches the \code{matrix-impute} Docker image and mounts a local data directory
 at \code{/data} inside the container.
 }
 \examples{
