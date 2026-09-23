@@ -1,0 +1,17 @@
+Package: matrixImpute
+Type: Package
+Title: Column-Wise Median Imputation and Docker Workflow
+Version: 1.0.0
+Authors@R: person("Student", "Candidate", email = "student@example.com", role = c("aut", "cre"))
+Description: Reads numeric CSV matrices, reports missing-value statistics,
+    performs column-wise median imputation, writes completed matrices,
+    and provides a host-side Docker launcher for reproducible execution.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    stats,
+    utils
+Suggests:
+    roxygen2

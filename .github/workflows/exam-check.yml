@@ -1,0 +1,75 @@
+name: R package and workflow check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install R dependencies
+        run: |
+          install.packages(c("ggplot2", "roxygen2"))
+        shell: Rscript {0}
+
+      - name: Generate package documentation
+        run: roxygen2::roxygenise("matrixImpute")
+        shell: Rscript {0}
+
+      - name: Build source package
+        run: R CMD build matrixImpute
+
+      - name: Check source package
+        run: R CMD check matrixImpute_1.0.0.tar.gz --no-manual
+
+      - name: Build Docker image
+        run: docker build -t matrix-impute .
+
+      - name: Run Docker workflow
+        run: |
+          rm -f data/matrix_completed.csv
+          Rscript scripts/run_imputation_cli.R data matrix_missing.csv matrix_completed.csv
+
+      - name: Validate imputation result
+        run: |
+          completed <- read.csv("data/matrix_completed.csv")
+          stopifnot(!anyNA(completed))
+          source("R/imputeColumns.R")
+          validation_output <- tempfile(fileext = ".csv")
+          result <- imputeColumns("data/matrix_missing.csv", validation_output)
+          stopifnot(result$n_missing == 12)
+          stopifnot(abs(result$missing_percentage - 20) < 1e-12)
+        shell: Rscript {0}
+
+      - name: Generate plot
+        run: Rscript exercise4_corrected.R
+
+      - name: Run debugging task
+        run: Rscript exercise5_corrected.R
+
+      - name: Upload outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: submission-outputs
+          path: |
+            matrixImpute_1.0.0.tar.gz
+            matrixImpute.Rcheck/00check.log
+            data/matrix_completed.csv
+            temperature_plot.pdf
+            Dockerfile
+            R/
+            scripts/
+            exercise4_corrected.R
+            exercise5_corrected.R
+            error_explanations.txt
+          if-no-files-found: error

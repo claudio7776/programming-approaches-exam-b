@@ -1,0 +1,10 @@
+Exercise 4
+1. The y aesthetic used a non-existent column named temperature. It must use temperature_c.
+2. ggsave() received the data frame df as its plot argument. It must receive the ggplot object p.
+3. The function returned df instead of the ggplot object p.
+
+Exercise 5
+1. total used nrow(mat), which counts rows only. The denominator must be the total number of elements, so length(mat) is required.
+2. mat == NA does not test missing values correctly. is.na(mat) must be used.
+3. n_missing / total returns a proportion from 0 to 1. It must be multiplied by 100 to obtain a percentage on the 0-100 scale.
+4. R is case-sensitive: MissingInfo(data) does not match the defined function missingInfo().
