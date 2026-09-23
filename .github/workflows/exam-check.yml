@@ -42,12 +42,13 @@ jobs:
 
       - name: Validate imputation result
         run: |
-          source("R/imputeColumns.R")
-          result <- imputeColumns("data/matrix_missing.csv", "data/matrix_completed.csv")
-          stopifnot(result$n_missing == 12)
-          stopifnot(abs(result$missing_percentage - 20) < 1e-12)
           completed <- read.csv("data/matrix_completed.csv")
           stopifnot(!anyNA(completed))
+          source("R/imputeColumns.R")
+          validation_output <- tempfile(fileext = ".csv")
+          result <- imputeColumns("data/matrix_missing.csv", validation_output)
+          stopifnot(result$n_missing == 12)
+          stopifnot(abs(result$missing_percentage - 20) < 1e-12)
         shell: Rscript {0}
 
       - name: Generate plot
